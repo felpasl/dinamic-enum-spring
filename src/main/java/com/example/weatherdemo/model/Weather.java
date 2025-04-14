@@ -2,18 +2,32 @@ package com.example.weatherdemo.model;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Weather information")
 public class Weather {
+    @Schema(description = "Location name", example = "New York")
     private String location;
+    
+    @Schema(description = "Temperature in Celsius", example = "22.5")
     private Double temperature;
-    private String condition;
+    
+    @Schema(description = "Weather condition", example = "SUNNY")
+    private WeatherType condition;
+    
+    @Schema(description = "Humidity percentage", example = "65")
     private Integer humidity;
+    
+    @Schema(description = "Wind speed in km/h", example = "10.2")
     private Double windSpeed;
+    
+    @Schema(description = "Timestamp of weather reading", example = "2025-04-14T14:30:00")
     private LocalDateTime timestamp;
 
     public Weather() {
     }
 
-    public Weather(String location, Double temperature, String condition, Integer humidity, Double windSpeed) {
+    public Weather(String location, Double temperature, WeatherType condition, Integer humidity, Double windSpeed) {
         this.location = location;
         this.temperature = temperature;
         this.condition = condition;
@@ -39,11 +53,11 @@ public class Weather {
         this.temperature = temperature;
     }
 
-    public String getCondition() {
+    public WeatherType getCondition() {
         return condition;
     }
 
-    public void setCondition(String condition) {
+    public void setCondition(WeatherType condition) {
         this.condition = condition;
     }
 

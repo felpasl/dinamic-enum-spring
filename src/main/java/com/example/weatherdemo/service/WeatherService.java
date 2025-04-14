@@ -25,7 +25,7 @@ public class WeatherService {
      */
     public Weather getRandomWeather(String location) {
         double temperature = getRandomTemperature();
-        String condition = getRandomWeatherCondition();
+        WeatherType condition = getRandomWeatherCondition();
         int humidity = getRandomHumidity();
         double windSpeed = getRandomWindSpeed();
         
@@ -63,9 +63,9 @@ public class WeatherService {
         return Math.round(ThreadLocalRandom.current().nextDouble(-15, 45) * 10.0) / 10.0;
     }
     
-    private String getRandomWeatherCondition() {
+    private WeatherType getRandomWeatherCondition() {
         WeatherType[] weatherTypes = WeatherType.values();
-        return weatherTypes[random.nextInt(weatherTypes.length)].getDisplayName();
+        return weatherTypes[random.nextInt(weatherTypes.length)];
     }
     
     private int getRandomHumidity() {
