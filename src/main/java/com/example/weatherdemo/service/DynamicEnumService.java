@@ -39,15 +39,14 @@ public class DynamicEnumService {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", 5);
-                if (parts.length >= 5) {
+                String[] parts = line.split(",", 4);
+                if (parts.length >= 4) {
                     String enumType = parts[0].trim();
                     String name = parts[1].trim();
                     Integer value = Integer.parseInt(parts[2].trim());
-                    String displayName = parts[3].trim();
-                    String description = parts[4].trim();
+                    String description = parts[3].trim();
 
-                    EnumEntry entry = new EnumEntry(enumType, name, value, displayName, description);
+                    EnumEntry entry = new EnumEntry(enumType, name, value, description);
                     
                     // Store by enum type
                     enumsByType.computeIfAbsent(enumType, k -> new ArrayList<>()).add(entry);
@@ -95,7 +94,7 @@ public class DynamicEnumService {
     
     public List<String> getDisplayNames(String enumType) {
         return getEnumsByType(enumType).stream()
-                .map(EnumEntry::getDisplayName)
+                .map(EnumEntry::getName)
                 .collect(Collectors.toList());
     }
     

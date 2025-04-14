@@ -14,7 +14,6 @@ public class DynamicEnum {
     private final String enumType;
     private final String name;
     private final int value;
-    private final String displayName;
     private final String description;
     
     // Static reference to the factory for JSON deserialization
@@ -24,11 +23,10 @@ public class DynamicEnum {
         DynamicEnum.factory = factory;
     }
     
-    private DynamicEnum(String enumType, String name, int value, String displayName, String description) {
+    private DynamicEnum(String enumType, String name, int value, String description) {
         this.enumType = enumType;
         this.name = name;
         this.value = value;
-        this.displayName = displayName;
         this.description = description;
     }
     
@@ -43,7 +41,6 @@ public class DynamicEnum {
             entry.getEnumType(),
             entry.getName(), 
             entry.getValue(), 
-            entry.getDisplayName(), 
             entry.getDescription()
         );
     }
@@ -68,13 +65,6 @@ public class DynamicEnum {
     @JsonValue
     public int getValue() {
         return value;
-    }
-
-    /**
-     * Gets the display name of this enum
-     */
-    public String getDisplayName() {
-        return displayName;
     }
     
     /**

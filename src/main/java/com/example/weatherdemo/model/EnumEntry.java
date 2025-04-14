@@ -7,17 +7,15 @@ public class EnumEntry {
     private String enumType;
     private String name;
     private Integer value;
-    private String displayName;
     private String description;
 
     public EnumEntry() {
     }
 
-    public EnumEntry(String enumType, String name, Integer value, String displayName, String description) {
+    public EnumEntry(String enumType, String name, Integer value, String description) {
         this.enumType = enumType;
         this.name = name;
         this.value = value;
-        this.displayName = displayName;
         this.description = description;
     }
 
@@ -45,14 +43,6 @@ public class EnumEntry {
         this.value = value;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -67,7 +57,6 @@ public class EnumEntry {
                 "enumType='" + enumType + '\'' +
                 ", name='" + name + '\'' +
                 ", value=" + value +
-                ", displayName='" + displayName + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
