@@ -3,13 +3,11 @@ package com.example.weatherdemo.model;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Dynamic enum representation", type = "string")
-@JsonFormat(shape = JsonFormat.Shape.STRING)
 public class DynamicEnum {
     private final String enumType;
     private final String name;
@@ -62,7 +60,6 @@ public class DynamicEnum {
     /**
      * Gets the numeric value of this enum
      */
-    @JsonValue
     public int getValue() {
         return value;
     }
@@ -72,6 +69,15 @@ public class DynamicEnum {
      */
     public String getDescription() {
         return description;
+    }
+    
+    /**
+     * This method determines how the enum is serialized to JSON
+     * We want to use the name (string value) instead of the numeric value
+     */
+    @JsonValue
+    public String toJson() {
+        return name;
     }
     
     /**

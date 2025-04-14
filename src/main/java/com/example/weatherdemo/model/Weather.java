@@ -1,8 +1,10 @@
 package com.example.weatherdemo.model;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -21,11 +23,8 @@ public class Weather {
         ref = "#/components/schemas/weatherTypeEnum"
     )
     @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @EnumType("weatherType")
     private DynamicEnum condition;
-    
-    // Specify which enum type to use for this weather condition
-    @Schema(hidden = true)
-    private final static String CONDITION_ENUM_TYPE = "weatherType";
     
     @Schema(
         description = "Temperature sensation", 
@@ -33,11 +32,8 @@ public class Weather {
         type = "string",
         ref = "#/components/schemas/temperatureSensationEnum"
     )
+    @EnumType("temperatureSensation")
     private DynamicEnum temperatureSensation;
-    
-    // Specify which enum type to use for temperature sensation
-    @Schema(hidden = true)
-    private final static String TEMPERATURE_SENSATION_ENUM_TYPE = "temperatureSensation";
     
     @Schema(description = "Humidity percentage", example = "65")
     private Integer humidity;
@@ -83,42 +79,66 @@ public class Weather {
         return condition;
     }
 
+    @JsonSetter("condition")
+    public void setCondition(Object conditionObj) {
+        if (conditionObj == null) {
+            this.condition = null;
+            return;
+        }
+        
+        String conditionStr = conditionObj.toString();
+        this.condition = DynamicEnum.fromString(getEnumTypeForField("condition"), conditionStr);
+    }
+    
     public void setCondition(DynamicEnum condition) {
         // Validate that the enum type is correct
-        if (condition != null && !CONDITION_ENUM_TYPE.equals(condition.getEnumType())) {
-            throw new IllegalArgumentException("Expected enum type: " + CONDITION_ENUM_TYPE + 
+        String expectedEnumType = getEnumTypeForField("condition");
+        if (condition != null && !expectedEnumType.equals(condition.getEnumType())) {
+            throw new IllegalArgumentException("Expected enum type: " + expectedEnumType + 
                                              ", but got: " + condition.getEnumType());
         }
         this.condition = condition;
     }
     
     public void setConditionFromString(String conditionValue) {
-        this.condition = DynamicEnum.fromString(CONDITION_ENUM_TYPE, conditionValue);
+        this.condition = DynamicEnum.fromString(getEnumTypeForField("condition"), conditionValue);
     }
     
     public static String getConditionEnumType() {
-        return CONDITION_ENUM_TYPE;
+        return getEnumTypeForField("condition");
     }
     
     public DynamicEnum getTemperatureSensation() {
         return temperatureSensation;
     }
 
+    @JsonSetter("temperatureSensation")
+    public void setTemperatureSensation(Object sensationObj) {
+        if (sensationObj == null) {
+            this.temperatureSensation = null;
+            return;
+        }
+        
+        String sensationStr = sensationObj.toString();
+        this.temperatureSensation = DynamicEnum.fromString(getEnumTypeForField("temperatureSensation"), sensationStr);
+    }
+    
     public void setTemperatureSensation(DynamicEnum temperatureSensation) {
         // Validate that the enum type is correct
-        if (temperatureSensation != null && !TEMPERATURE_SENSATION_ENUM_TYPE.equals(temperatureSensation.getEnumType())) {
-            throw new IllegalArgumentException("Expected enum type: " + TEMPERATURE_SENSATION_ENUM_TYPE + 
+        String expectedEnumType = getEnumTypeForField("temperatureSensation");
+        if (temperatureSensation != null && !expectedEnumType.equals(temperatureSensation.getEnumType())) {
+            throw new IllegalArgumentException("Expected enum type: " + expectedEnumType + 
                                              ", but got: " + temperatureSensation.getEnumType());
         }
         this.temperatureSensation = temperatureSensation;
     }
     
     public void setTemperatureSensationFromString(String sensationValue) {
-        this.temperatureSensation = DynamicEnum.fromString(TEMPERATURE_SENSATION_ENUM_TYPE, sensationValue);
+        this.temperatureSensation = DynamicEnum.fromString(getEnumTypeForField("temperatureSensation"), sensationValue);
     }
     
     public static String getTemperatureSensationEnumType() {
-        return TEMPERATURE_SENSATION_ENUM_TYPE;
+        return getEnumTypeForField("temperatureSensation");
     }
 
     public Integer getHumidity() {
@@ -143,5 +163,21 @@ public class Weather {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+    
+    /**
+     * Utility method to get the enum type from a field's EnumType annotation
+     */
+    private static String getEnumTypeForField(String fieldName) {
+        try {
+            Field field = Weather.class.getDeclaredField(fieldName);
+            EnumType annotation = field.getAnnotation(EnumType.class);
+            if (annotation != null) {
+                return annotation.value();
+            }
+            throw new IllegalStateException("Field " + fieldName + " does not have an EnumType annotation");
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("Field not found: " + fieldName, e);
+        }
     }
 }
