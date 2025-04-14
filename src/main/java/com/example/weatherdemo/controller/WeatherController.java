@@ -1,8 +1,8 @@
 package com.example.weatherdemo.controller;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.weatherdemo.model.Weather;
-import com.example.weatherdemo.model.WeatherType;
+import com.example.weatherdemo.service.DynamicEnumService;
 import com.example.weatherdemo.service.WeatherService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,10 +29,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class WeatherController {
 
     private final WeatherService weatherService;
+    private final DynamicEnumService dynamicEnumService;
 
     @Autowired
-    public WeatherController(WeatherService weatherService) {
+    public WeatherController(WeatherService weatherService, DynamicEnumService dynamicEnumService) {
         this.weatherService = weatherService;
+        this.dynamicEnumService = dynamicEnumService;
     }
 
     @Operation(
@@ -89,7 +91,59 @@ public class WeatherController {
     }
 
     @Operation(
-        summary = "Get all weather types",
+        summary = "Get all available enum types",
+        description = "Returns a list of all available enum types in the system",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Successful operation",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))
+            )
+        }
+    )
+    @GetMapping("/enum-types")
+    public ResponseEntity<Set<String>> getAllEnumTypes() {
+        return ResponseEntity.ok(dynamicEnumService.getAllEnumTypes());
+    }
+
+    @Operation(
+        summary = "Get enum values for a specific type",
+        description = "Returns a list of all display names for the specified enum type",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Successful operation",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))
+            )
+        }
+    )
+    @GetMapping("/enum-types/{type}/values")
+    public ResponseEntity<List<String>> getEnumTypeValues(
+        @Parameter(description = "Enum type name") @PathVariable("type") String enumType) {
+        return ResponseEntity.ok(dynamicEnumService.getDisplayNames(enumType));
+    }
+    
+    @Operation(
+        summary = "Get enum type details",
+        description = "Returns detailed information about a specific enum type including numeric values",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Successful operation",
+                content = @Content(schema = @Schema(implementation = Object.class))
+            )
+        }
+    )
+    @GetMapping("/enum-types/{type}/details")
+    public ResponseEntity<Map<String, Integer>> getEnumTypeDetails(
+        @Parameter(description = "Enum type name") @PathVariable("type") String enumType) {
+        return ResponseEntity.ok(dynamicEnumService.getNameValueMap(enumType));
+    }
+    
+    // Add backwards compatibility for existing API endpoints
+    
+    @Operation(
+        summary = "Get all weather types (legacy endpoint)",
         description = "Returns a list of all available weather types with their display names",
         responses = {
             @ApiResponse(
@@ -101,9 +155,22 @@ public class WeatherController {
     )
     @GetMapping("/types")
     public ResponseEntity<List<String>> getWeatherTypes() {
-        List<String> types = Arrays.stream(WeatherType.values())
-                .map(WeatherType::getDisplayName)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(types);
+        return ResponseEntity.ok(dynamicEnumService.getDisplayNames(Weather.getConditionEnumType()));
+    }
+    
+    @Operation(
+        summary = "Get weather type details (legacy endpoint)",
+        description = "Returns detailed information about weather types including numeric values and descriptions",
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Successful operation",
+                content = @Content(schema = @Schema(implementation = Object.class))
+            )
+        }
+    )
+    @GetMapping("/types/details")
+    public ResponseEntity<Map<String, Integer>> getWeatherTypeDetails() {
+        return ResponseEntity.ok(dynamicEnumService.getNameValueMap(Weather.getConditionEnumType()));
     }
 }

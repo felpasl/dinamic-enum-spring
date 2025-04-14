@@ -1,0 +1,16 @@
+enum,name,value,displayName,description
+weatherType,SUNNY,0,Sunny,Clear sky with sun
+weatherType,PARTLY_CLOUDY,1,Partly Cloudy,Mix of sun and clouds
+weatherType,CLOUDY,2,Cloudy,Sky covered with clouds
+weatherType,RAINY,3,Rainy,Precipitation in the form of water drops
+weatherType,THUNDERSTORM,4,Thunderstorm,Storm with lightning and thunder
+weatherType,SNOWY,5,Snowy,Precipitation in the form of snowflakes
+weatherType,FOGGY,6,Foggy,Low hanging cloud reducing visibility
+weatherType,WINDY,7,Windy,Strong air movement
+temperatureSensation,FREEZING,-2,Freezing,Extremely cold temperature
+temperatureSensation,COLD,-1,Cold,Below comfortable temperature
+temperatureSensation,COOL,0,Cool,Slightly chilly but pleasant
+temperatureSensation,MILD,1,Mild,Comfortable moderate temperature
+temperatureSensation,WARM,2,Warm,Pleasantly above room temperature
+temperatureSensation,HOT,3,Hot,Uncomfortably high temperature
+temperatureSensation,SCORCHING,4,Scorching,Extremely hot temperature
